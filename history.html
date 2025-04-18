@@ -6,14 +6,16 @@
     <title>Turban History & Origin | Turban Chronicles</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #ff9933;
-            --secondary-color: #008080;
-            --accent-color: #556b2f;
-            --text-color: #2e2e2e;
-            --light-bg: #f4f4f4;
-            --dark-bg: #2c2c54;
-        }
+          :root {
+      --primary-color: #FF6B6B;
+      --secondary-color: #4ECDC4;
+      --accent-color: #ff6b6b;
+      --dark-color: #292F36;
+      --light-color: #F7FFF7;
+      --text-color: #333333;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
         * {
             margin: 0;
             padding: 0;
@@ -104,7 +106,7 @@
             content: '';
             position: absolute;
             width: 6px;
-            background-color: var(--primary-color);
+            background-color: #ff9933;
             top: 0;
             bottom: 0;
             left: 50%;
@@ -203,51 +205,82 @@
 
         /* Footer */
         footer {
-            background-color: var(--dark-bg);
-            color: white;
-            padding: 3rem 5%;
-        }
+      background-color: var(--dark-color);
+      color: white;
+      padding: 4rem 5%;
+      position: relative;
+    }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
 
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            color: var(--accent-color);
-        }
+    .footer-section h3 {
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+      font-size: 1.3rem;
+      position: relative;
+      display: inline-block;
+    }
 
-        .footer-section ul {
-            list-style: none;
-        }
+    .footer-section h3::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 2px;
+      bottom: -8px;
+      left: 0;
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+    }
 
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
+    .footer-section ul {
+      list-style: none;
+    }
 
-        .footer-section ul li a {
-            color: #ddd;
-            text-decoration: none;
-        }
+    .footer-section ul li {
+      margin-bottom: 0.8rem;
+    }
 
-        .footer-section ul li a:hover {
-            color: var(--accent-color);
-        }
+    .footer-section ul li a {
+      color: #ece9e9;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-block;
+    }
 
-        .social-icons i {
-            font-size: 1.5rem;
-            margin-right: 1rem;
-            cursor: pointer;
-        }
+    .footer-section ul li a:hover {
+      color: var(--accent-color);
+      transform: translateX(5px);
+    }
 
-        .footer-bottom {
-            text-align: center;
-            padding-top: 1rem;
-            border-top: 1px solid #444;
-        }
+    .social-icons {
+      margin-top: 1.5rem;
+    }
+
+    .social-icons a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .social-icons a:hover {
+      color: var(--accent-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: #aaa;;
+      }
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -421,32 +454,37 @@
     <!-- Footer -->
     <footer>
         <div class="footer-content">
-            <div class="footer-section">
-                <h3>About TurbanChronicles</h3>
-                <p>Dedicated to preserving and celebrating turban heritage across cultures worldwide.</p>
+          <div class="footer-section">
+            <h3>About Turban Chronicles</h3>
+            <p>Dedicated to preserving and celebrating turban heritage across cultures worldwide through innovative technology and education.</p>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-youtube"></i></a>
             </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="history.html">History</a></li>
-                    <li><a href="try_on.html">Try-On</a></li>
-                    <li><a href="blog.html">blog</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <p>info@turbanChronicles.com</p>
-                <div class="social-icons">
-                    <i class="fab fa-facebook"></i>
-                    <i class="fab fa-instagram"></i>
-                    <i class="fab fa-twitter"></i>
-                </div>
-            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="history.html">History of Turbans</a></li>
+              <li><a href="try_on.html">Virtual Try-On</a></li>
+              <li><a href="blog.html">Cultural Blog</a></li>
+              <li><a href="stores.html">Find Stores</a></li>
+              <li><a href="quiz.html">Turban Quiz</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-envelope"></i> info@turbanChronicles.com</p>
+            <p><i class="fas fa-phone"></i> +91 9820251507</p>
+            <p><i class="fas fa-map-marker-alt"></i> 123 Cultural Lane, Dadar</p>
+          </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Turban Chronicles. All rights reserved.</p>
+          <p>&copy; 2025 TurbanChronicles. All rights reserved. | Designed with <i class="fas fa-heart" style="color: var(--primary-color);"></i> for cultural preservation</p>
         </div>
-    </footer>
+      </footer>
 
     <script>
         // Mobile Navigation Toggle
