@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turban Stores Directory | Turban Chronicles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+       :root {
+      --primary-color: #FF6B6B;
+      --secondary-color: #4ECDC4;
+      --accent-color: #FFE66D;
+      --dark-color: #292F36;
+      --light-color: #F7FFF7;
+      --text-color: #333333;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            line-height: 1.7;
+            background-color: var(--light-bg);
+        }
+
+        /* Navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background-color: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            padding: 1rem 5%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--dark-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 1.05rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .current-page {
+            color: var(--primary-color) !important;
+            font-weight: 600 !important;
+        }
+
+        .current-page::after {
+            width: 100% !important;
+        }
+
+        .burger {
+            display: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .burger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark-color);
+            margin: 5px;
+            transition: var(--transition);
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            padding: 8rem 5% 4rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        
+
+        
+
+       
+       
+
+        /* Store Grid */
+        .store-grid {
+            padding: 2rem 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .store-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .store-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.2);
+        }
+
+        .store-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .store-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .store-card-content {
+            padding: 1.8rem;
+            position: relative;
+        }
+
+        .store-card h3 {
+            color: var(--dark-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.4rem;
+        }
+
+        .store-address, .store-phone {
+            margin-bottom: 0.8rem;
+            color: #666;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .store-address i, .store-phone i {
+            margin-right: 10px;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-top: 3px;
+        }
+
+        .store-type {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .type-purchase {
+            background-color: rgba(78, 205, 196, 0.2);
+            color: var(--secondary-color);
+        }
+
+        .type-rental {
+            background-color: rgba(255, 107, 107, 0.2);
+            color: var(--primary-color);
+        }
+
+        .store-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 1.2rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .store-link i {
+            margin-left: 8px;
+            transition: var(--transition);
+        }
+
+        .store-link:hover {
+            color: var(--primary-color);
+        }
+
+        .store-link:hover i {
+            transform: translateX(5px);
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rating-stars {
+            color: var(--accent-color);
+            margin-right: 8px;
+        }
+
+        .rating-count {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            background: white;
+            border: 1px solid #eee;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Footer */
+        /* Footer */
+    footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 4rem 5%;
+      position: relative;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+      font-size: 1.3rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .footer-section h3::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 2px;
+      bottom: -8px;
+      left: 0;
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-section ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .footer-section ul li a:hover {
+      color: var(--accent-color);
+      transform: translateX(5px);
+    }
+
+    .social-icons {
+      margin-top: 1.5rem;
+    }
+
+    .social-icons a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .social-icons a:hover {
+      color: var(--accent-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background: white;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: var(--transition);
+                box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links li {
+                margin: 1.5rem 0;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .burger.active div:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .burger.active div:nth-child(2) {
+                opacity: 0;
+            }
+
+            .burger.active div:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+
+            .page-header {
+                padding: 6rem 5% 3rem;
+                clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+            }
+
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .store-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .store-card {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .store-card:nth-child(1) { animation-delay: 0.1s; }
+        .store-card:nth-child(2) { animation-delay: 0.2s; }
+        .store-card:nth-child(3) { animation-delay: 0.3s; }
+        .store-card:nth-child(4) { animation-delay: 0.4s; }
+        .store-card:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>Turban Chronicles</span></h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="significance.html">Significance</a></li>
+            <li><a href="uses.html">Uses</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="try_on.html">Try-On</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="stores.html" class="current-page">Stores</a></li>
+            <li><a href="quiz.html">Quiz</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Turban Stores & Rentals</h1>
+        <p>Find premium places to buy or rent turbans for weddings, religious ceremonies, and special occasions</p>
+        
+        </div>
+    </section>
+
+    <!-- Filter Buttons -->
+   
+
+    <!-- Store Grid -->
+    <div class="store-grid">
+        <!-- Store 1 -->
+        <div class="store-card">
+            <img src="Pink.webp" alt="Paggan Wale storefront">
+            <div class="store-card-content">
+                <span class="store-type type-purchase">For Purchase</span>
+                <div class="rating">
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="rating-count">(128 reviews)</span>
+                </div>
+                <h3>Paggan Wale</h3>
+                <p class="store-address"><i class="fas fa-map-marker-alt"></i> 2nd Floor, Plot no. 414 2/VI, Tunda Talab, Gali Buta Shah Di, Loha Mandi, Amritsar, Punjab, 143001</p>
+                <p class="store-phone"><i class="fas fa-phone-alt"></i> +91 96920 00079</p>
+                <a href="https://pagganwale.com/" class="store-link" target="_blank">Visit Website <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        
+        <!-- Store 2 -->
+        <div class="store-card">
+            <img src="ks7.jpg" alt="Khalsastore products">
+            <div class="store-card-content">
+                <span class="store-type type-rental">For Rent</span>
+                <div class="rating">
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="rating-count">(96 reviews)</span>
+                </div>
+                <h3>Khalsastore</h3>
+                <p class="store-address"><i class="fas fa-map-marker-alt"></i> Online Store - Worldwide Shipping</p>
+                <p class="store-phone"><i class="fas fa-phone-alt"></i> +91-8288947793</p>
+                <a href="https://www.khalsastore.com/" class="store-link" target="_blank">Visit Website <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        
+        <!-- Store 3 -->
+        <div class="store-card">
+            <img src="shahi.png" alt="ShahiTaj store interior">
+            <div class="store-card-content">
+                <span class="store-type type-purchase">For Purchase</span>
+                <div class="rating">
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="rating-count">(215 reviews)</span>
+                </div>
+                <h3>ShahiTaj</h3>
+                <p class="store-address"><i class="fas fa-map-marker-alt"></i> Plot No. - 25, Road No. - 1, N.N. Acharya Marg, Panchwati, Udaipur, Rajasthan, India. 313001</p>
+                <p class="store-phone"><i class="fas fa-phone-alt"></i> (+91) 9358260841</p>
+                <a href="https://www.shahitaj.in/?srsltid=AfmBOop0xXw0DwxISpKuclszEgzcXjgN8aBImoVFNHyYSP_FN43H5-Uk" class="store-link" target="_blank">Visit Website <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        
+        <!-- Store 4 -->
+        <div class="store-card">
+            <img src="gts.jpg" alt="Grand Turban Collections showcase">
+            <div class="store-card-content">
+                <span class="store-type type-rental">For Rent</span>
+                <div class="rating">
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="rating-count">(187 reviews)</span>
+                </div>
+                <h3>Grand Turban Collections</h3>
+                <p class="store-address"><i class="fas fa-map-marker-alt"></i> Hall Bazar, Katra Ahluwalia, Amritsar, Punjab 143001</p>
+                <p class="store-phone"><i class="fas fa-phone-alt"></i> +91-80547-87878</p>
+                <a href="https://sikhaccessories.com/" class="store-link" target="_blank">Visit Website <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        
+        <!-- Store 5 -->
+        <div class="store-card">
+            <img src="singh.jpg" alt="The Singh Store products">
+            <div class="store-card-content">
+                <span class="store-type type-purchase">For Purchase</span>
+                <div class="rating">
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="rating-count">(142 reviews)</span>
+                </div>
+                <h3>The Singh Store</h3>
+                <p class="store-address"><i class="fas fa-map-marker-alt"></i> 81, Sarabha nagar extension Phase 1, Ludhiana, Punjab- 142022</p>
+                <p class="store-phone"><i class="fas fa-phone-alt"></i> +91 98202 51507</p>  
+                <a href="https://www.thesinghstore.in/category/turbans?srsltid=AfmBOorWCP-sQJtsemdxHv-kNLlF3DV3EKDafpnwq3ovPW4lYZs3LBSw" class="store-link" target="_blank">Visit Website <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        
+        <!-- Store 6 -->
+        <div class="store-card">
+            <img src="royal2.jpg" alt="Royal Turbans collection">
+            <div class="store-card-content">
+                <span class="store-type type-rental">For Rent</span>
+                <div class="rating">
+                    <div class="rating-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="rating-count">(89 reviews)</span>
+                </div>
+                <h3>Royal Turbans</h3>
+                <p class="store-address"><i class="fas fa-map-marker-alt"></i> 45, Connaught Place, New Delhi 110001</p>
+                <p class="store-phone"><i class="fas fa-phone-alt"></i> +91 98110 55442</p>
+                <a href="https://www.justdial.com/Lucknow/The-Royal-Turban-Kekra-Market-Gomti-Nagar/0522PX522-X522-181102155646-L1K6_BZDET" class="store-link" target="_blank">Visit Website <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About Turban Chronicles</h3>
+            <p>Dedicated to preserving and celebrating turban heritage across cultures worldwide through innovative technology and education.</p>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="history.html">History of Turbans</a></li>
+              <li><a href="try_on.html">Virtual Try-On</a></li>
+              <li><a href="blog.html">Cultural Blog</a></li>
+              <li><a href="stores.html">Find Stores</a></li>
+              <li><a href="quiz.html">Turban Quiz</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-envelope"></i> info@turbanChronicles.com</p>
+            <p><i class="fas fa-phone"></i> +91 9820251507</p>
+            <p><i class="fas fa-map-marker-alt"></i> 123 Cultural Lane, Dadar</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 TurbanChronicles. All rights reserved. | Designed with <i class="fas fa-heart" style="color: var(--primary-color);"></i> for cultural preservation</p>
+        </div>
+      </footer>
+    <script>
+        // Mobile Navigation Toggle
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        burger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            burger.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                burger.classList.remove('active');
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            const backToTop = document.querySelector('.back-to-top');
+            
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            if (window.scrollY > 300) {
+                backToTop.classList.add('active');
+            } else {
+                backToTop.classList.remove('active');
+            }
+        });
+
+        // Back to top button
+        document.querySelector('.back-to-top').addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Filter buttons
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                // Here you would add filtering functionality
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-container input');
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                // Here you would add search functionality
+                console.log('Searching for:', searchInput.value);
+            }
+        });
+
+        // Highlight current page in navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = location.pathname.split('/').pop().split('.')[0];
+            if (currentPage === 'stores') {
+                document.querySelector('.nav-links a[href="stores.html"]').classList.add('current-page');
+            }
+        });
+    </script>
+</body>
+</html>

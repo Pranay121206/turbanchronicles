@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Turban Try-On</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #FF6B6B;
+      --secondary-color: #4ECDC4;
+      --accent-color: #FFE66D;
+      --dark-color: #292F36;
+      --light-color: #F7FFF7;
+      --text-color: #333333;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      color: var(--text-color);
+      line-height: 1.6;
+      background-color: var(--light-color);
+    }
+
+    /* Navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 5%;
+      background-color: white;
+      box-shadow: var(--shadow);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      transition: var(--transition);
+    }
+
+    .navbar.scrolled {
+      padding: 1rem 5%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .logo h1 {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+    }
+
+    .nav-links li {
+      margin-left: 2rem;
+      position: relative;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 0.5rem 0;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .current-page {
+      color: var(--primary-color) !important;
+      font-weight: 600 !important;
+    }
+
+    .current-page::after {
+      width: 100% !important;
+    }
+
+    .burger {
+      display: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    /* Main Content */
+    .try-on-container {
+      padding: 8rem 2rem 3rem;
+      text-align: center;
+      min-height: calc(100vh - 200px);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .try-on-container h2 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: var(--dark-color);
+      position: relative;
+      display: inline-block;
+    }
+
+    .try-on-container h2::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 4px;
+      bottom: -10px;
+      left: 25%;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+
+    #video, #canvas {
+      max-width: 640px;
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      border: 5px solid white;
+    }
+
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .video-wrapper {
+      position: relative;
+      display: inline-block;
+      margin: 2rem 0;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: var(--transition);
+    }
+
+    .video-wrapper:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    }
+
+    .controls {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* Button Styles */
+    .control-btn {
+      padding: 0.8rem 2rem;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .control-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .control-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .control-btn:hover::before {
+      left: 100%;
+    }
+
+    .selection-section {
+      margin: 2rem auto;
+      max-width: 800px;
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .selection-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .selection-title {
+      margin-top: 0;
+      color: var(--dark-color);
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    .selection-subtitle {
+      font-size: 1rem;
+      color: #666;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .selection-options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .turban-option {
+      width: 120px;
+      height: 120px;
+      border: 3px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      object-fit: contain;
+      background-color: #f0f0f0;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .turban-option:hover {
+      transform: scale(1.1) rotate(2deg);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .turban-option.selected {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+      transform: scale(1.05);
+    }
+
+    .color-option {
+      width: 80px;
+      height: 80px;
+      border: 3px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      object-fit: contain;
+      background-color: #f0f0f0;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .color-option:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .color-option.selected {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+      transform: scale(1.05);
+    }
+
+    .loading {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      background: rgba(0,0,0,0.8);
+      padding: 15px 30px;
+      border-radius: 50px;
+      z-index: 1001;
+      font-size: 1.2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Floating action button */
+    .fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 100;
+      transition: var(--transition);
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: var(--dark-color);
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 4rem 5%;
+      position: relative;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+      font-size: 1.3rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .footer-section h3::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 2px;
+      bottom: -8px;
+      left: 0;
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-section ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .footer-section ul li a:hover {
+      color: var(--accent-color);
+      transform: translateX(5px);
+    }
+
+    .social-icons {
+      margin-top: 1.5rem;
+    }
+
+    .social-icons a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .social-icons a:hover {
+      color: var(--accent-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    /* Pulse animation */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        background-color: white;
+        padding: 1rem 5%;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-links li {
+        margin: 0.8rem 0;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .try-on-container {
+        padding: 7rem 1rem 2rem;
+      }
+
+      .try-on-container h2 {
+        font-size: 2rem;
+      }
+
+      .selection-section {
+        padding: 1.5rem;
+      }
+
+      .turban-option {
+        width: 100px;
+        height: 100px;
+      }
+
+      .color-option {
+        width: 70px;
+        height: 70px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .controls {
+        flex-direction: column;
+      }
+
+      .control-btn {
+        width: 100%;
+      }
+
+      .turban-option {
+        width: 80px;
+        height: 80px;
+      }
+
+      .color-option {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">
+      <h1>Turban Chronicles</h1>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="significance.html">Significance</a></li>
+      <li><a href="uses.html">Uses</a></li>
+      <li><a href="map.html">Map</a></li>
+      <li><a href="try_on.html" class="current-page">Try-On</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="stores.html">Stores</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="burger">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+
+  <section class="try-on-container">
+    <h2>Virtual Turban Try-On Experience</h2>
+    
+    <div class="selection-section">
+      <h3 class="selection-title">Select Your Turban Style</h3>
+      <p class="selection-subtitle">Choose from our collection of traditional and modern styles</p>
+      <div class="selection-options" id="turban-types">
+        <!-- Turban types will be added here by JavaScript -->
+      </div>
+    </div>
+    
+    <div class="selection-section">
+      <h3 class="selection-title">Choose Your Color</h3>
+      <p class="selection-subtitle" id="color-subtitle">Select a turban style first</p>
+      <div class="selection-options" id="color-options">
+        <!-- Color options will be added here by JavaScript -->
+      </div>
+    </div>
+    
+    <div class="video-wrapper">
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" id="capture-btn">
+        <i class="fas fa-camera"></i> Capture Photo
+      </button>
+      <button class="control-btn" id="toggle-camera-btn">
+        <i class="fas fa-sync-alt"></i> Flip Camera
+      </button>
+    </div>
+  </section>
+
+  <div class="loading" id="loading">
+    <i class="fas fa-spinner fa-spin"></i> Loading face detection...
+  </div>
+
+  <!-- Floating action button -->
+  <div class="fab tooltip" id="help-fab">
+    <i class="fas fa-question"></i>
+    <span class="tooltiptext">Need help? Click here</span>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Turban Chronicles</h3>
+        <p>Dedicated to preserving and celebrating turban heritage across cultures worldwide through innovative technology and education.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="history.html">History of Turbans</a></li>
+          <li><a href="try_on.html">Virtual Try-On</a></li>
+          <li><a href="blog.html">Cultural Blog</a></li>
+          <li><a href="stores.html">Find Stores</a></li>
+          <li><a href="quiz.html">Turban Quiz</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <p><i class="fas fa-envelope"></i> info@turbanChronicles.com</p>
+        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Cultural Lane, Heritage City</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 TurbanChronicles. All rights reserved. | Designed with <i class="fas fa-heart" style="color: var(--primary-color);"></i> for cultural preservation</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script>
+    // DOM Elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const loadingIndicator = document.getElementById('loading');
+    const turbanTypesSection = document.getElementById('turban-types');
+    const colorOptionsSection = document.getElementById('color-options');
+    const colorSubtitle = document.getElementById('color-subtitle');
+    const captureBtn = document.getElementById('capture-btn');
+    const toggleCameraBtn = document.getElementById('toggle-camera-btn');
+    const helpFab = document.getElementById('help-fab');
+    const navbar = document.querySelector('.navbar');
+
+    // Turban options data
+    const turbanStyles = [
+      {
+        id: "Dastar",
+        name: "Dastar",
+        colors: [
+          { name: "Blue", image: "dastar-removebg-preview.png" },
+          { name: "Yellow", image: "dastar-turban-sikhism-pagri-png-favpng-SkqrQ1pUAd6uBpESh2SjKCJ5q_t-removebg-preview.png" },
+          { name: "Black", image: "Sikh-Turban-Free-Download-PNG-removebg-preview.png" },
+          { name: "Green", image: "images__6_-removebg-preview.png" },
+          { name: "Pink", image:"150-1-5-meters-pink-5-merts-fullvoile-sikh-700-original-imagnm3qdhepqhbf-removebg-preview.png"},
+          { name: "Maroon", image: "dastar-turban-pagri-sikh-sikhism-removebg-preview.png" }
+        ],
+        thumbnail: "dastar-removebg-preview.png"
+      },
+      {
+        id: "Bandhani Pagdi",
+        name: "Bandhani Pagdi",
+        verticalOffset: -0.55,
+        rotation: 180,
+        colors: [
+          { name: "Red", image: "images-removebg-preview (1).png" },
+          { name: "Orange", image: "images__2_-removebg-preview (1).png" },
+        ],
+        thumbnail: "images-removebg-preview (1).png"
+      },
+      {
+        id: "Pheta",
+        name: "Pheta",
+        scale:2.35,
+        verticalOffset:-61.5,
+        colors: [
+          { name: "Orange", image: "pngtree-indian-rajasthani-kesariya-turban-wear-an-wedding-png-image_7119856-removebg-preview.png" },
+          { name: "Orange & Gold", image: "6bdc641ac99130df740c64225699956e-removebg-preview.png" }
+        ],
+        thumbnail: "pngtree-indian-rajasthani-kesariya-turban-wear-an-wedding-png-image_7119856-removebg-preview.png"
+      },
+      {
+        id: "Mysuru Peta",
+        name: "Mysuru Peta",
+        verticalOffset:-30.5,
+        colors: [
+          {name:"Red", image:"download__1_-removebg-preview.png"},
+          {name:"White & Gold",image:"download__2_-removebg-preview.png"}
+        ],
+        thumbnail:"download__1_-removebg-preview.png"
+      }
+    ];
+
+    // Current state
+    let currentStream = null;
+    let currentTurban = {
+      style: null,
+      color: null,
+      image: new Image()
+    };
+    let detectionActive = false;
+    let isFrontCamera = true;
+
+    // Initialize the application
+    function init() {
+      createTurbanOptions();
+      initCamera();
+      setupEventListeners();
+      setupMobileNav();
+      setupScrollEffect();
+    }
+
+    // Create turban type options
+    function createTurbanOptions() {
+      turbanStyles.forEach((style, index) => {
+        const option = document.createElement('img');
+        option.className = 'turban-option';
+        option.src = style.thumbnail;
+        option.alt = style.name;
+        option.title = style.name;
+        option.dataset.index = index;
+        
+        option.addEventListener('click', () => {
+          document.querySelectorAll('#turban-types .turban-option').forEach(opt => {
+            opt.classList.remove('selected');
+          });
+          option.classList.add('selected');
+          selectTurbanStyle(index);
+        });
+        
+        turbanTypesSection.appendChild(option);
+      });
+      
+      // Select first turban by default
+      if (turbanStyles.length > 0) {
+        document.querySelector('#turban-types .turban-option').click();
+      }
+    }
+
+    // Create color options for the selected turban style
+    function createColorOptions(style) {
+      colorOptionsSection.innerHTML = '';
+      colorSubtitle.textContent = `Available colors for ${style.name} style:`;
+      
+      style.colors.forEach((color, index) => {
+        const option = document.createElement('img');
+        option.className = 'color-option';
+        option.src = color.image;
+        option.alt = color.name;
+        option.title = color.name;
+        option.dataset.index = index;
+        
+        option.addEventListener('click', () => {
+          document.querySelectorAll('#color-options .color-option').forEach(opt => {
+            opt.classList.remove('selected');
+          });
+          option.classList.add('selected');
+          selectTurbanColor(style, color);
+        });
+        
+        colorOptionsSection.appendChild(option);
+      });
+
+      // Select first color by default
+      if (style.colors.length > 0) {
+        selectTurbanColor(style, style.colors[0]);
+        document.querySelector('#color-options .color-option').classList.add('selected');
+      }
+    }
+
+    // Select a turban style
+    function selectTurbanStyle(index) {
+      const style = turbanStyles[index];
+      currentTurban.style = style;
+      createColorOptions(style);
+    }
+
+    // Select a turban color
+    function selectTurbanColor(style, color) {
+      currentTurban.color = color;
+      updateTurbanImage();
+    }
+
+    // Update the turban image with current style and color
+    function updateTurbanImage() {
+      if (!currentTurban.style || !currentTurban.color) return;
+      
+      const img = new Image();
+      img.onload = () => {
+        currentTurban.image = img;
+      };
+      img.onerror = () => {
+        console.error('Failed to load turban image:', currentTurban.color.image);
+        // Fallback to first available color
+        if (currentTurban.style.colors.length > 0) {
+          currentTurban.color = currentTurban.style.colors[0];
+          img.src = currentTurban.color.image;
+        }
+      };
+      
+      img.src = currentTurban.color.image;
+    }
+
+    // Initialize camera
+    async function initCamera() {
+      loadingIndicator.style.display = 'block';
+      
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        detectionActive = false;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { 
+            facingMode: isFrontCamera ? 'user' : 'environment',
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        });
+
+        video.srcObject = stream;
+        currentStream = stream;
+
+        video.onloadedmetadata = async () => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          
+          await loadFaceDetectionModels();
+          startFaceDetection();
+        };
+      } catch (err) {
+        alert(`Cannot access camera: ${err.message}`);
+      }
+    }
+
+    // Toggle between front and back camera
+    function toggleCamera() {
+      isFrontCamera = !isFrontCamera;
+      initCamera();
+    }
+
+    // Load face detection models
+    async function loadFaceDetectionModels() {
+      try {
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models'),
+          faceapi.nets.faceLandmark68Net.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models')
+        ]);
+      } catch (error) {
+        alert('Failed to load face detection models');
+      } finally {
+        loadingIndicator.style.display = 'none';
+      }
+    }
+
+    // Start face detection
+    function startFaceDetection() {
+      detectionActive = true;
+      
+      async function detectFaces() {
+        if (!detectionActive) return;
+        
+        try {
+          const detections = await faceapi.detectAllFaces(
+            video, 
+            new faceapi.TinyFaceDetectorOptions()
+          ).withFaceLandmarks();
+
+          // Clear and draw video frame
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          // Draw turban if face detected and turban loaded
+          if (detections.length > 0 && currentTurban.image.complete) {
+            const landmarks = detections[0].landmarks;
+            const jawOutline = landmarks.getJawOutline();
+            
+            // Calculate head dimensions
+            const headWidth = jawOutline[jawOutline.length - 1].x - jawOutline[0].x;
+            const headCenterX = jawOutline[0].x + headWidth / 2;
+            
+            // Find top of head
+            let topOfHead = canvas.height;
+            landmarks.positions.forEach(point => {
+              if (point.y < topOfHead) topOfHead = point.y;
+            });
+
+            // Position turban
+            const scaleFactor = currentTurban.style.scale || 1.8;
+            const verticalOffset = currentTurban.style.verticalOffset || 0;
+
+            const scale = headWidth / currentTurban.image.naturalWidth * scaleFactor;
+            const width = currentTurban.image.naturalWidth * scale;
+            const height = currentTurban.image.naturalHeight * scale;
+            const x = headCenterX - width / 2;
+            const y = topOfHead - height * 0.6 + verticalOffset;
+
+            context.drawImage(currentTurban.image, x, y, width, height);
+          }
+        } catch (error) {
+          console.error('Face detection error:', error);
+        }
+        
+        requestAnimationFrame(detectFaces);
+      }
+
+      detectFaces();
+    }
+
+    // Setup mobile navigation
+    function setupMobileNav() {
+      document.querySelector('.burger').addEventListener('click', function() {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+    }
+
+    // Setup scroll effect for navbar
+    function setupScrollEffect() {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      });
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Capture photo button
+      captureBtn.addEventListener('click', () => {
+        // Add pulse animation
+        captureBtn.classList.add('pulse');
+        setTimeout(() => {
+          captureBtn.classList.remove('pulse');
+        }, 2000);
+        
+        const link = document.createElement('a');
+        link.download = 'turban-try-on.jpg';
+        link.href = canvas.toDataURL('image/jpg');
+        link.click();
+      });
+
+      // Toggle camera button
+      toggleCameraBtn.addEventListener('click', toggleCamera);
+
+      // Help floating button
+      helpFab.addEventListener('click', () => {
+        alert("How to use:\n1. Allow camera access\n2. Select a turban style\n3. Choose a color\n4. Position your face in frame\n5. Click 'Capture Photo' to save your image");
+      });
+    }
+
+    // Start the application
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

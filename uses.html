@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turban Uses | Turban Chronicles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+      --primary-color: #FF6B6B;
+      --secondary-color: #4ECDC4;
+      --accent-color: #FFE66D;
+      --dark-color: #292F36;
+      --light-color: #F7FFF7;
+      --text-color: #333333;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .current-page {
+            color: var(--primary-color) !important;
+            font-weight: bold !important;
+        }
+
+        .burger {
+            display: none;
+            cursor: pointer;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 6rem 5% 3rem;
+            background-color: var(--light-bg);
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+       /* Carousel Styles */
+        /* Carousel Styles */
+        .carousel-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .carousel__track {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        .carousel__slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel__slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 2rem;
+            color: white;
+        }
+
+        .slide-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide-content p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .carousel__navigation-button {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 0 5px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .carousel__navigation-button.active {
+            background-color: white;
+        }
+
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-arrow.prev {
+            left: 20px;
+        }
+
+        .carousel-arrow.next {
+            right: 20px;
+        }
+
+        /* Footer */
+       
+    footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 4rem 5%;
+      position: relative;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+      font-size: 1.3rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .footer-section h3::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 2px;
+      bottom: -8px;
+      left: 0;
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-section ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .footer-section ul li a:hover {
+      color: var(--accent-color);
+      transform: translateX(5px);
+    }
+
+    .social-icons {
+      margin-top: 1.5rem;
+    }
+
+    .social-icons a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .social-icons a:hover {
+      color: var(--accent-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+        @keyframes tonext {
+        75% {
+          left: 0;
+        }
+        95% {
+          left: 100%;
+        }
+        98% {
+          left: 100%;
+        }
+        99% {
+          left: 0;
+        }
+      }
+      
+      @keyframes tostart {
+        75% {
+          left: 0;
+        }
+        95% {
+          left: -300%;
+        }
+        98% {
+          left: -300%;
+        }
+        99% {
+          left: 0;
+        }
+      }
+      
+      @keyframes snap {
+        96% {
+          scroll-snap-align: center;
+        }
+        97% {
+          scroll-snap-align: none;
+        }
+        99% {
+          scroll-snap-align: none;
+        }
+        100% {
+          scroll-snap-align: center;
+        }
+      }
+      
+      
+    
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background-color: white;
+                padding: 1rem 5%;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+
+            .burger {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>Turban Chronicles</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="significance.html">Significance</a></li>
+            <li><a href="uses.html" class="current-page">Uses</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="try_on.html">Try-On</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="stores.html">Stores</a></li>
+            <li><a href="quiz.html">Quiz</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Uses of Turbans</h1>
+        <p>From practical applications to modern fashion statements</p>
+    </section>
+
+    
+
+    <!-- Carousel Section -->
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="carousel__track">
+                <!-- Slide 1 -->
+                <div class="carousel__slide" data-slide="1">
+                    <img src="cit.jpg" alt="Sikh man wearing turban">
+
+                    <div class="slide-content">
+                        <h2>Cultural Identity and Tradition</h2>
+                        <p>The turban is a vital part of cultural identity across various regions of India. It signifies regional heritage and is often worn to express pride in one's cultural roots. In states like Punjab, Rajasthan, Maharashtra, and Karnataka, the turban reflects distinctive local styles and traditions, ensuring the preservation of community values and practices.</p>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="carousel__slide" data-slide="2">
+                    <img src="rp2.jpg" alt="Desert nomad wearing turban">
+                    <div class="slide-content">
+                        <h2>Religious Significance</h2>
+                        <p>In many religions, particularly Sikhism, the turban is a key element of religious observance. The dastār in Sikhism symbolizes spiritual dedication, equality, and discipline. It is worn by Sikh men as an outward sign of their commitment to their faith and their responsibilities as a member of the Khalsa. Similarly, in Hindu and Vaishnava traditions, turbans are worn during religious ceremonies as a sign of respect to the divine.</p>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="carousel__slide" data-slide="3">
+                    <img src="symbol.jpg" alt="Fashionable turban styles">
+                    <div class="slide-content">
+                        <h2>Symbol of Honor and Respect</h2>
+                        <p>TThe turban has long been a symbol of honor and social status. In many communities, offering or receiving a turban represents respect, leadership, and dignity. For example, during important ceremonies like weddings, the act of gifting a turban signifies honor and trust. In some cultures, the turban is also tied to courage and heroism, especially in warrior societies.
+
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="carousel__slide" data-slide="4">
+                    <img src="festives.jpg">
+                    <div class="slide-content">
+                        <h2>Ceremonial and Festive Wear</h2>
+                        <p>The turban is often worn during festivals and celebrations, adding to the festive atmosphere. In states like Rajasthan, Gujarat, and Maharashtra, turbans are worn during weddings, religious holidays, and public events, where they are adorned with vibrant colors and intricate tying techniques to symbolize joy, prosperity, and celebration.</p>
+                    </div>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="carousel__slide" data-slide="5">
+                    <img src="protection.jpg" alt="Medical turban">
+                    <div class="slide-content">
+                        <h2>Protection from the Elements</h2>
+                        <p>In hot and sunny regions, turbans provide protection from the harsh climate, particularly in desert areas like Rajasthan. The turban helps shield the head from intense heat and dust, acting as a functional piece of clothing that serves both comfort and practicality in daily life.
+
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Slide 6 -->
+                <div class="carousel__slide" data-slide="6">
+                    <img src="foe2.jpg" alt="Cultural turban styles">
+                    <div class="slide-content">
+                        <h2>A Form of Personal Expression</h2>
+                        <p>The turban is also a personal style statement. In many regions, the way a turban is tied, the fabric, and the colors used can reflect an individual's personality, preferences, and even mood. Whether it's a simple, plain turban or an elaborate, decorative one, the style can also denote one's social standing and family heritage, adding a layer of personal identity to the garment.</p>
+                    </div>
+                </div>
+
+                <!-- Slide 7 -->
+                <div class="carousel__slide" data-slide="7">
+                    <img src="su2.jpg" alt="Historical turban">
+                    <div class="slide-content">
+                        <h2>A Tool for Social Unity</h2>
+                        <p>Turbans also serve as a unifying symbol within various communities. For example, in Sikhism, the turban unites Sikhs around the world, regardless of country, language, or ethnicity. It fosters a sense of belonging to a larger family and shared values, contributing to a strong sense of community and solidarity. Similarly, in other regions, wearing the same style of turban at events or gatherings strengthens bonds and promotes a collective identity.</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="carousel-arrow prev">❮</button>
+            <button class="carousel-arrow next">❯</button>
+
+            <div class="carousel-nav">
+                <button class="carousel__navigation-button active" data-slide="1"></button>
+                <button class="carousel__navigation-button" data-slide="2"></button>
+                <button class="carousel__navigation-button" data-slide="3"></button>
+                <button class="carousel__navigation-button" data-slide="4"></button>
+                <button class="carousel__navigation-button" data-slide="5"></button>
+                <button class="carousel__navigation-button" data-slide="6"></button>
+                <button class="carousel__navigation-button" data-slide="7"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const track = document.querySelector('.carousel__track');
+            const slides = Array.from(document.querySelectorAll('.carousel__slide'));
+            const navButtons = document.querySelectorAll('.carousel__navigation-button');
+            const prevBtn = document.querySelector('.carousel-arrow.prev');
+            const nextBtn = document.querySelector('.carousel-arrow.next');
+            
+            let currentSlide = 0;
+            const slideCount = slides.length;
+
+            // Initialize - hide all slides except first
+            slides.forEach((slide, index) => {
+                if (index !== 0) {
+                    slide.style.display = 'none';
+                }
+            });
+
+            function showSlide(index) {
+                // Hide all slides
+                slides.forEach(slide => {
+                    slide.style.display = 'none';
+                });
+                
+                // Show the selected slide
+                slides[index].style.display = 'block';
+                
+                // Update active nav button
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                navButtons[index].classList.add('active');
+                
+                currentSlide = index;
+            }
+
+            // Navigation buttons
+            navButtons.forEach((button, index) => {
+                button.addEventListener('click', () => showSlide(index));
+            });
+
+            // Arrow buttons
+            prevBtn.addEventListener('click', () => {
+                const newIndex = (currentSlide - 1 + slideCount) % slideCount;
+                showSlide(newIndex);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const newIndex = (currentSlide + 1) % slideCount;
+                showSlide(newIndex);
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    const newIndex = (currentSlide - 1 + slideCount) % slideCount;
+                    showSlide(newIndex);
+                }
+                if (e.key === 'ArrowRight') {
+                    const newIndex = (currentSlide + 1) % slideCount;
+                    showSlide(newIndex);
+                }
+            });
+        });
+    </script>
+</body>
+
+    
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About Turban Chronicles</h3>
+            <p>Dedicated to preserving and celebrating turban heritage across cultures worldwide through innovative technology and education.</p>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="history.html">History of Turbans</a></li>
+              <li><a href="try_on.html">Virtual Try-On</a></li>
+              <li><a href="blog.html">Cultural Blog</a></li>
+              <li><a href="stores.html">Find Stores</a></li>
+              <li><a href="quiz.html">Turban Quiz</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-envelope"></i> info@turbanChronicles.com</p>
+            <p><i class="fas fa-phone"></i> +91 9820251507</p>
+            <p><i class="fas fa-map-marker-alt"></i> 123 Cultural Lane, Dadar</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 TurbanChronicles. All rights reserved. | Designed with <i class="fas fa-heart" style="color: var(--primary-color);"></i> for cultural preservation</p>
+        </div>
+      </footer>
+    <script>
+        // Mobile Navigation Toggle
+        document.querySelector('.burger').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Highlight current page in navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = location.pathname.split('/').pop().split('.')[0];
+            if (currentPage === 'uses') {
+                document.querySelector('.nav-links a[href="uses.html"]').classList.add('current-page');
+            }
+        });
+    </script>
+</body>
+</html>

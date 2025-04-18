@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turban History & Origin | Turban Chronicles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff9933;
+            --secondary-color: #008080;
+            --accent-color: #556b2f;
+            --text-color: #2e2e2e;
+            --light-bg: #f4f4f4;
+            --dark-bg: #2c2c54;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .current-page {
+            color: var(--primary-color) !important;
+            font-weight: bold !important;
+        }
+
+        .burger {
+            display: none;
+            cursor: pointer;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 6rem 5% 3rem;
+            background-color: var(--light-bg);
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            padding: 3rem 5%;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: white;
+            border: 4px solid var(--primary-color);
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .right {
+            left: 50%;
+        }
+
+        .left::after {
+            right: -12px;
+        }
+
+        .right::after {
+            left: -12px;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .timeline-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cultural Origins */
+        .cultural-origins {
+            padding: 3rem 5%;
+            background-color: var(--light-bg);
+        }
+
+        .cultural-origins h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .origin-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .origin-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .origin-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .origin-card-content {
+            padding: 1.5rem;
+        }
+
+        .origin-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #ddd;
+            text-decoration: none;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-icons i {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid #444;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background-color: white;
+                padding: 1rem 5%;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .timeline::after {
+                left: 31px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+
+            .timeline-item::after {
+                left: 18px;
+            }
+
+            .left::after, .right::after {
+                left: 18px;
+            }
+
+            .right {
+                left: 0%;
+            }
+
+
+             /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('image_3.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            margin-top: 70px;
+        }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>Turban Chronicles</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="history.html" class="current-page">History</a></li>
+            <li><a href="significance.html">Significance</a></li>
+            <li><a href="uses.html">Uses</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="try_on.html">Try-On</a></li>
+            <li><a href="blog.html">Blog</a></li>
+           <li><a href="stores.html">Stores</a></li>
+           <li><a href="quiz.html">Quiz</a></li>
+           <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>History & Origin of Turbans</h1>
+        <p>Exploring the rich heritage across civilizations and centuries</p>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section">
+        <div class="timeline">
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3>3000 BCE</h3>
+                    <p>Earliest depictions of turban-like headwear appear in Mesopotamian art and sculptures, showing wrapped cloth head coverings.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3>8th Century</h3>
+                    <p>Turbans became prominent in Islamic cultures, adopted by Muslim leaders and scholars across the Middle East and North Africa.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3>15th Century</h3>
+                    <p>Sikh Gurus in South Asia popularized the turban as a mandatory religious article, symbolizing spirituality and equality.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3>17th Century</h3>
+                    <p>Ottoman Empire established elaborate turban styles as markers of social status and profession.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3>19th Century</h3>
+                    <p>British colonial period saw turbans being adapted by various military regiments in South Asia.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3>21st Century</h3>
+                    <p>Modern turbans have become global fashion statements while maintaining cultural and religious significance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cultural Origins -->
+    <section class="cultural-origins">
+        <h2>Cultural Origins</h2>
+        <div class="origin-cards">
+            <div class="origin-card">
+                <img src="SA_turban.jpg" alt="South Asia">
+                <div class="origin-card-content">
+                    <h3>South Asia</h3>
+                    <p>The dastaar in Sikhism, pagri in Hindu traditions, and various regional styles across India, Pakistan, and Bangladesh.</p>
+                </div>
+            </div>
+            
+            <div class="origin-card">
+                <img src="ME_turban.png" alt="Middle East">
+                <div class="origin-card-content">
+                    <h3>Middle East</h3>
+                    <p>Keffiyeh, ghutra, and other styles worn across Arab nations, often with agal (rope band) to hold them in place.</p>
+                </div>
+            </div>
+            
+            <div class="origin-card">
+                <img src="NF_turban.jpg" alt="North Africa">
+                <div class="origin-card-content">
+                    <h3>North Africa</h3>
+                    <p>Tagelmust worn by Tuareg people, often indigo-dyed and serving as protection from desert conditions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TurbanChronicles</h3>
+                <p>Dedicated to preserving and celebrating turban heritage across cultures worldwide.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="history.html">History</a></li>
+                    <li><a href="try_on.html">Try-On</a></li>
+                    <li><a href="blog.html">blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>info@turbanChronicles.com</p>
+                <div class="social-icons">
+                    <i class="fab fa-facebook"></i>
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-twitter"></i>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Turban Chronicles. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        document.querySelector('.burger').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Highlight current page in navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = location.pathname.split('/').pop().split('.')[0];
+            if (currentPage === 'history') {
+                document.querySelector('.nav-links a[href="history.html"]').classList.add('current-page');
+            }
+        });
+    </script>
+</body>
+</html>

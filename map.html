@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Turban Cultural Map | Turban Chronicles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <style>
+        :root {
+      --primary-color: #FF6B6B;
+      --secondary-color: #4ECDC4;
+      --accent-color: #FFE66D;
+      --dark-color: #292F36;
+      --light-color: #F7FFF7;
+      --text-color: #333333;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-top: 80px;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--cream);
+        }
+
+        /* Navigation - Enhanced Styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .current-page {
+            color: var(--primary-color) !important;
+            font-weight: bold !important;
+        }
+
+        .burger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .burger:hover {
+            color: var(--primary-color);
+        }
+
+        /* Page Header - Enhanced */
+        .page-header {
+            text-align: center;
+            padding: 5rem 5% 3rem;
+            background: linear-gradient(135deg, rgba(255,153,51,0.1) 0%, rgba(85,107,47,0.1) 100%);
+            margin-top: -20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url() center/cover no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            position: relative;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            animation: fadeInDown 1s ease;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            color: var(--text-color);
+            animation: fadeIn 1.5s ease;
+        }
+
+        /* Map Section - Enhanced */
+        .map-section {
+            padding: 4rem 5%;
+            background-color: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--primary-color);
+            margin: 0.5rem auto;
+        }
+
+        #map {
+            height: 700px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        #map:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Footer - Enhanced */
+        /* Footer */
+    footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 4rem 5%;
+      position: relative;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+      font-size: 1.3rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .footer-section h3::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 2px;
+      bottom: -8px;
+      left: 0;
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-section ul li a {
+      color: #ddd;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .footer-section ul li a:hover {
+      color: var(--accent-color);
+      transform: translateX(5px);
+    }
+
+    .social-icons {
+      margin-top: 1.5rem;
+    }
+
+    .social-icons a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .social-icons a:hover {
+      color: var(--accent-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            color: var(--gold);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design - Enhanced */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background-color: white;
+                padding: 1rem 5%;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 1rem 0;
+                margin-left: 0;
+            }
+
+            .nav-links a::after {
+                bottom: 0;
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .page-header {
+                padding: 3rem 5% 2rem;
+            }
+
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            #map {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .page-header p {
+                font-size: 1rem;
+            }
+            
+            #map {
+                height: 400px;
+            }
+        }
+        
+        /* Custom Popup Styling */
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px !important;
+            box-shadow: var(--shadow) !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        
+        .leaflet-popup-content {
+            margin: 0 !important;
+            min-width: 250px;
+        }
+        
+        .custom-popup {
+            padding: 1rem;
+        }
+        
+        .custom-popup h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        
+        .custom-popup p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .custom-popup a {
+            color: var(--secondary-color);
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .custom-popup a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+        
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            animation: bounce 2s infinite;
+        }
+        
+        .scroll-indicator i {
+            margin-left: 0.5rem;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+            40% {transform: translateY(-10px) translateX(-50%);}
+            60% {transform: translateY(-5px) translateX(-50%);}
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>Turban Chronicles</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="significance.html">Significance</a></li>
+            <li><a href="uses.html">Uses</a></li>
+            <li><a href="map.html" class="current-page">Map</a></li>
+            <li><a href="try_on.html">Try-On</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="stores.html">Stores</a></li>
+            <li><a href="quiz.html">Quiz</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <h1>Discover Turban Traditions</h1>
+        <p>Explore the rich cultural heritage of turbans across different regions of the world</p>
+    </section>
+
+    <section class="map-section">
+        <h2 class="section-title">Turban Cultural Map</h2>
+        <div id="map"></div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About Turban Chronicles</h3>
+            <p>Dedicated to preserving and celebrating turban heritage across cultures worldwide through innovative technology and education.</p>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="history.html">History of Turbans</a></li>
+              <li><a href="try_on.html">Virtual Try-On</a></li>
+              <li><a href="blog.html">Cultural Blog</a></li>
+              <li><a href="stores.html">Find Stores</a></li>
+              <li><a href="quiz.html">Turban Quiz</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-envelope"></i> info@turbanChronicles.com</p>
+            <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+            <p><i class="fas fa-map-marker-alt"></i> 123 Cultural Lane, Heritage City</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 TurbanChronicles. All rights reserved. | Designed with <i class="fas fa-heart" style="color: var(--primary-color);"></i> for cultural preservation</p>
+        </div>
+      </footer>
+
+    <div class="scroll-indicator">
+        Explore the map <i class="fas fa-arrow-down"></i>
+    </div>
+
+    <script>
+        // Mobile Navigation Toggle
+        document.querySelector('.burger').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+            this.querySelector('i').classList.toggle('fa-times');
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Hide scroll indicator when scrolling
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                scrollIndicator.style.opacity = '0';
+                setTimeout(() => {
+                    scrollIndicator.style.display = 'none';
+                }, 300);
+            }
+        });
+
+        // Map initialization with enhanced features
+        document.addEventListener('DOMContentLoaded', () => {
+            const map = L.map('map', {
+                zoomControl: false,
+                fadeAnimation: true,
+                zoomAnimation: true
+            }).setView([23.5, 78.9], 4);
+
+            // Add zoom control with custom position
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+
+            // Add scale control
+            L.control.scale({
+                position: 'bottomleft',
+                imperial: false
+            }).addTo(map);
+
+            // Custom tile layer with better visual appeal
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                detectRetina: true
+            }).addTo(map);
+
+            // Custom turban icon
+            const turbanIcon = L.icon({
+                iconUrl: 'https://icon2.cleanpng.com/20180829/axv/kisspng-portable-network-graphics-clip-art-turban-dastar-i-sikh-turban-png-amp-sikh-turban-png-transparent-1713946710086.webp',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40],
+                className: 'turban-marker-icon'
+            });
+
+            // Enhanced locations data with images
+            const locations = [
+                { 
+                    name: "Punjab, India", 
+                    subtitle: "Sikh Dastaars",
+                    coords: [31.1, 75.4], 
+                    description: "The Dastar is an integral part of Sikh identity, representing honor, self-respect, courage, and spirituality. Each style has specific cultural significance.",
+                    image: "https://images.unsplash.com/photo-1621277907172-3e81e0416a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    link: "https://en.wikipedia.org/wiki/Dastar"
+                },
+                { 
+                    name: "Maharashtra, India", 
+                    subtitle: "Traditional Pheta",
+                    coords: [19.076, 72.877], 
+                    description: "The Marathi Pheta is a distinctive turban style traditionally worn during weddings and important ceremonies, often in saffron or white colors.",
+                    image: "https://images.unsplash.com/photo-1595341595379-cf0f6c5d78a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    link: "https://en.wikipedia.org/wiki/Pheta"
+                },
+                { 
+                    name: "Karnataka, India", 
+                    subtitle: "Mysore Peta",
+                    coords: [15.000,75.300], 
+                    description: "The Mysore Peta is a traditional ceremonial turban worn by the erstwhile royalty of Mysore and now by dignitaries during official functions.",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Mysore_peta.jpg/500px-Mysore_peta.jpg",
+                    link: "https://en.wikipedia.org/wiki/Mysore_peta"
+                },
+                { 
+                    name: "Sindh, Pakistan", 
+                    subtitle: "Ajrak Turbans",
+                    coords: [25.396, 68.3578], 
+                    description: "Sindhi men traditionally wear turbans with Ajrak prints, which are block-printed shawls featuring intricate geometric patterns in deep indigo and crimson.",
+                    image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    link: "https://en.wikipedia.org/wiki/Ajrak"
+                },
+                { 
+                    name: "Kabul, Afghanistan", 
+                    subtitle: "Pashtun Turbans",
+                    coords: [34.5553, 69.2075], 
+                    description: "The Afghan turban, known as 'lungi' or 'patkay', varies by region and ethnicity, with Pashtun styles being particularly distinctive.",
+                    image: "https://images.unsplash.com/photo-1566753431331-3267b8a5e89a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    link: "https://en.wikipedia.org/wiki/Pakol"
+                },
+                { 
+                    name: "Fez, Morocco", 
+                    subtitle: "Berber Headwear",
+                    coords: [34.0331, -5.0003], 
+                    description: "North African turbans, often worn with the traditional djellaba, serve both practical and cultural purposes in Berber communities.",
+                    image: "https://images.unsplash.com/photo-1557771714-35c3dc5e4c8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    link: "https://en.wikipedia.org/wiki/Tagelmust"
+                },
+                { 
+                    name: "Assam, India", 
+                    subtitle: "Gamusa Headgear",
+                    coords: [26.2006, 92.9376], 
+                    description: "The Assamese Gamusa, a white cotton cloth with red borders, is sometimes worn as a turban during cultural events and Bihu festivals.",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Assamese_gamosa.jpg/500px-Assamese_gamosa.jpg",
+                    link: "https://en.wikipedia.org/wiki/Gamosa"
+                }
+            ];
+
+            // Add markers with custom popups
+            locations.forEach(loc => {
+                const marker = L.marker(loc.coords, { 
+                    icon: turbanIcon,
+                    riseOnHover: true
+                }).addTo(map);
+                
+                const popupContent = `
+                    <div class="custom-popup">
+                        <h3>${loc.name}</h3>
+                        <p><em>${loc.subtitle}</em></p>
+                        ${loc.image ? `<img src="${loc.image}" alt="${loc.name} turban" style="width:100%; height:auto; border-radius:4px; margin:0.5rem 0;">` : ''}
+                        <p>${loc.description}</p>
+                        <a href="${loc.link}" target="_blank">Learn more <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+            });
+
+            // Region highlights with better styling
+            const punjabPolygon = L.polygon([
+                [32.5, 74], [32.5, 76], [30.5, 76], [30.5, 74]
+            ], { 
+                color: '#ff9933',
+                weight: 2,
+                fillColor: '#ff9933',
+                fillOpacity: 0.1,
+                className: 'region-highlight'
+            }).addTo(map).bindPopup("<strong>Punjab Region</strong><br>Heartland of Sikh turban traditions");
+
+            const maharashtraPolygon = L.polygon([
+                [21.5, 72.5], [21.5, 80], [16.5, 80], [16.5, 72.5]
+            ], { 
+                color: '#008080',
+                weight: 2,
+                fillColor: '#008080',
+                fillOpacity: 0.1,
+                className: 'region-highlight'
+            }).addTo(map).bindPopup("<strong>Maharashtra Region</strong><br>Home of the distinctive Pheta turban");
+
+            // Add a legend
+            const legend = L.control({ position: 'bottomright' });
+            legend.onAdd = function(map) {
+                const div = L.DomUtil.create('div', 'info legend');
+                div.style.backgroundColor = 'white';
+                div.style.padding = '10px';
+                div.style.borderRadius = '5px';
+                div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
+                div.innerHTML = `
+                    <h4 style="margin:0 0 10px;color:var(--primary-color);font-family:'Playfair Display',serif;">Legend</h4>
+                    <div style="display:flex;align-items:center;margin-bottom:5px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3132/3132693.png" style="width:20px;height:20px;margin-right:5px;"> Turban Locations
+                    </div>
+                    <div style="display:flex;align-items:center;margin-bottom:5px;">
+                        <div style="width:20px;height:20px;margin-right:5px;background:rgba(255, 153, 51, 0.2);border:1px solid #ff9933;"></div> Punjab Region
+                    </div>
+                    <div style="display:flex;align-items:center;">
+                        <div style="width:20px;height:20px;margin-right:5px;background:rgba(0, 128, 128, 0.2);border:1px solid #008080;"></div> Maharashtra Region
+                    </div>
+                `;
+                return div;
+            };
+            legend.addTo(map);
+        });
+    </script>
+</body>
+</html>

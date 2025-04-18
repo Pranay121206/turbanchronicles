@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Turban Chronicles - Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <style>
+        :root {
+            --primary-color: #ff9933;
+            --primary-light: #ffb366;
+            --secondary-color: #008080;
+            --accent-color: #556b2f;
+            --text-color: #2e2e2e;
+            --text-light: #555;
+            --light-bg: #f9f5f0;
+            --card-bg: #fff;
+            --dark-bg: #2c2c54;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            /* background: var(--light-bg); */ /* Removed default background */
+            background-image: url('tc8.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding-top: 80px;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links .current-page {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .burger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background-color: white;
+                padding: 1rem 5%;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+                animation: fadeIn 0.3s ease-in-out;
+            }
+
+            .burger {
+                display: block;
+            }
+        }
+
+        #start-screen {
+            text-align: center;
+            padding: 3rem;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for start screen */
+            border-radius: 10px; /* Optional: Rounded corners for start screen */
+        }
+
+        #start-screen .restart-btn {
+            background-color: var(--primary-color); /* Strong background color for the button */
+            color: white; /* Contrasting text color */
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Optional: Add shadow */
+        }
+
+        #start-screen .restart-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white for quiz container */
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-question {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .quiz-options button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .quiz-options button:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.02);
+        }
+
+        .quiz-options .correct {
+            background-color: #4caf50 !important;
+        }
+
+        .quiz-options .wrong {
+            background-color: #f44336 !important;
+        }
+
+        .next-btn, .restart-btn, .exit-btn {
+            margin-top: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .next-btn:hover, .restart-btn:hover, .exit-btn:hover {
+            transform: scale(1.05);
+            background-color: var(--secondary-color);
+        }
+
+        .score-section {
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-top: 2rem;
+            animation: popUp 1s ease-in-out;
+        }
+
+        @keyframes popUp {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .end-buttons {
+            text-align: center;
+            margin-top: 2rem;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .end-buttons button {
+            margin: 0 1rem;
+        }
+
+        .timer-bar {
+            height: 10px;
+            background-color: var(--accent-color);
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            transition: width 1s linear;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 6px solid #ccc;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo"><h1>Turban Chronicles</h1></div>
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="significance.html">Significance</a></li>
+        <li><a href="uses.html">Uses</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="try_on.html">Try-On</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="stores.html">Stores</a></li>
+        <li><a href="quiz.html" class="current-page">Quiz</a></li>
+        <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="burger"><i class="fas fa-bars"></i></div>
+</nav>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div></div>
+
+<div id="start-screen" style="text-align:center; padding: 3rem;">
+    <h2 style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;">Welcome to the Turban Chronicles Quiz!</h2>
+    <p style="font-size: 1.1rem; margin-bottom: 2rem;">Test your knowledge about traditional Indian turbans.</p>
+    <button class="restart-btn" onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div class="quiz-container" style="display:none;">
+    <div class="timer-bar" id="timer-bar"></div>
+    <div class="quiz-question" id="question"></div>
+    <div class="quiz-options" id="options"></div>
+    <button class="next-btn" id="next">Next</button>
+    <div class="score-section" id="score"></div>
+    <div class="end-buttons" id="end-buttons" style="display:none;">
+        <button class="restart-btn" onclick="startQuiz()">Try Again</button>
+        <button class="exit-btn" onclick="window.location.href='index.html'">Exit</button>
+    </div>
+</div>
+
+<audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="wrong-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+const quizData = [
+    { q: "Which turban is commonly associated with Rajasthan?", a: ["Pheta", "Pagri", "Mysore Peta", "Dastar"], c: 1 },
+    { q: "Which turban is worn in Maharashtra during traditional ceremonies?", a: ["Pagri", "Pheta", "Dastar", "Mysore Peta"], c: 1 },
+    { q: "Which turban is commonly worn by Sikhs?", a: ["Dastar", "Pheta", "Pagri", "Peta"], c: 0 },
+    { q: "Which turban is associated with Karnataka?", a: ["Pheta", "Dastar", "Mysore Peta", "Rajasthani Pagri"], c: 2 },
+    { q: "Which type of turban symbolizes royalty in Punjab?", a: ["Patiala Shahi", "Mysore Peta", "Rajasthani Pagri", "Pheta"], c: 0 },
+    { q: "What is a common feature of a Rajasthani turban?", a: ["Flat top", "Bright colors", "Feathers", "Golden thread"], c: 1 },
+    { q: "Which state is the 'Saafa' turban linked with?", a: ["Rajasthan", "Punjab", "Maharashtra", "Kerala"], c: 0 },
+    { q: "Which turban is worn during Mysore Dasara?", a: ["Pheta", "Saafa", "Mysore Peta", "Dastar"], c: 2 },
+    { q: "What is a traditional Sikh turban also called?", a: ["Peta", "Pheta", "Dastar", "Pagri"], c: 2 },
+    { q: "Which color turban often represents martyrdom in Sikhism?", a: ["White", "Black", "Blue", "Red"], c: 3 }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let timer;
+let shuffledQuizData = [];
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const nextBtn = document.getElementById("next");
+const scoreEl = document.getElementById("score");
+const endButtons = document.getElementById("end-buttons");
+const timerBar = document.getElementById("timer-bar");
+
+function startQuiz() {
+    document.getElementById("start-screen").style.display = "none";
+    document.querySelector(".quiz-container").style.display = "block";
+    shuffledQuizData = [...quizData].sort(() => Math.random() - 0.5);
+    currentQuestion = 0;
+    score = 0;
+    loadQuestion();
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    const current = shuffledQuizData[currentQuestion];
+    questionEl.textContent = `Q${currentQuestion + 1}: ${current.q}`;
+    optionsEl.innerHTML = "";
+    current.a.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(btn, index);
+        optionsEl.appendChild(btn);
+    });
+    nextBtn.style.display = "none";
+    scoreEl.textContent = "";
+    endButtons.style.display = "none";
+    startTimer();
+}
+
+function startTimer() {
+    let timeLeft = 10;
+    timerBar.style.width = "100%";
+    timer = setInterval(() => {
+        timeLeft--;
+        timerBar.style.width = (timeLeft * 10) + "%";
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            autoSelect();
+        }
+    }, 1000);
+}
+
+function autoSelect() {
+    const buttons = optionsEl.querySelectorAll("button");
+    buttons.forEach(btn => btn.disabled = true);
+    buttons[shuffledQuizData[currentQuestion].c].classList.add("correct");
+    nextBtn.style.display = "block";
+}
+
+function selectAnswer(button, index) {
+    clearInterval(timer);
+    const buttons = optionsEl.querySelectorAll("button");
+    buttons.forEach(btn => btn.disabled = true);
+    if (index === shuffledQuizData[currentQuestion].c) {
+        button.classList.add("correct");
+        document.getElementById("correct-sound").play();
+        score++;
+    } else {
+        button.classList.add("wrong");
+        buttons[shuffledQuizData[currentQuestion].c].classList.add("correct");
+        document.getElementById("wrong-sound").play();
+    }
+    nextBtn.style.display = "block";
+}
+
+nextBtn.addEventListener("click", () => {
+    currentQuestion++;
+    if (currentQuestion < shuffledQuizData.length) {
+        loadQuestion();
+    } else {
+        showScore();
+    }
+});
+
+function showScore() {
+    questionEl.style.display = "none";
+    optionsEl.style.display = "none";
+    nextBtn.style.display = "none";
+    timerBar.style.display = "none";
+    scoreEl.innerHTML = `🎉 You scored ${score} out of ${shuffledQuizData.length}! 🎉`;
+    endButtons.style.display = "block";
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+}
+
+document.querySelector('.burger').addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.toggle('active');
+});
+
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        document.getElementById("loading").classList.add("hidden");
+    }, 1000);
+});
+</script>
