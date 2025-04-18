@@ -239,6 +239,100 @@
       font-size: 0.9rem;
       color: #aaa;
     }
+    .chatbox {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    font-family: 'Segoe UI', sans-serif;
+    z-index: 1000;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background: white;
+}
+
+.chat-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-content {
+    display: none;
+    flex-direction: column;
+    height: 400px;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    background: white;
+}
+
+.messages {
+    padding: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+#user-input {
+    border: none;
+    border-top: 1px solid #eee;
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.typing-dots {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 5px;
+}
+.typing-dots span {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out;
+    opacity: 0.6;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+.user-message {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+.bot-message {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+.error-message {
+    color: #d32f2f;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .chatbox {
+        width: 90%;
+        right: 5%;
+    }
+}
+
+
+
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -294,6 +388,21 @@
             <i class="fas fa-bars"></i>
         </div>
     </nav>
+
+
+    <!-- Chatbox -->
+<div class="chatbox" id="chatbox">
+    <div class="chat-header" onclick="toggleChat()">
+        <span>Chat with us</span>
+        <i class="fas fa-chevron-down" id="chat-toggle-icon"></i>
+    </div>
+    <div class="chat-content" id="chat-content">
+        <div class="messages" id="messages">
+            <div class="bot-message">Hello! Ask me anything about turbans.</div>
+        </div>
+        <input type="text" id="user-input" placeholder="Type your question..." autocomplete="off">
+    </div>
+</div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -382,6 +491,91 @@
                 document.querySelector('.nav-links a[href="index.html"]').classList.add('current-page');
             }
         });
+
+
+        
+function toggleChat() {
+    const chatContent = document.getElementById('chat-content');
+    const icon = document.getElementById('chat-toggle-icon');
+
+    if (chatContent.style.display === 'flex') {
+        chatContent.style.display = 'none';
+        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    } else {
+        chatContent.style.display = 'flex';
+        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+        document.getElementById('user-input').focus();
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    const messages = document.getElementById('messages');
+
+    const userMsg = document.createElement('div');
+    userMsg.className = 'user-message';
+    userMsg.textContent = `You: ${message}`;
+    messages.appendChild(userMsg);
+
+    const typingIndicator = document.createElement('div');
+    typingIndicator.id = 'typing';
+    typingIndicator.className = 'bot-message';
+    typingIndicator.innerHTML = `Bot is typing <span class="typing-dots"><span></span><span></span><span></span></span>`;
+    messages.appendChild(typingIndicator);
+
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+        const response = await fetch('http://localhost:3000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+
+        document.getElementById('typing').remove();
+
+        const botMsg = document.createElement('div');
+        botMsg.className = 'bot-message';
+
+        if (data.status === "error") {
+            botMsg.textContent = `Error: ${data.reply}`;
+            botMsg.classList.add('error-message');
+        } else {
+            botMsg.textContent = `Bot: ${data.reply}`;
+        }
+
+        messages.appendChild(botMsg);
+
+    } catch (error) {
+        console.error("Chat error:", error);
+        document.getElementById('typing').remove();
+
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'bot-message error-message';
+        errorMsg.textContent = "Sorry, I'm experiencing technical difficulties. Please try again later.";
+        messages.appendChild(errorMsg);
+    }
+
+    messages.scrollTop = messages.scrollHeight;
+}
+
+document.getElementById('user-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+// Auto-open chat after 3 seconds
+setTimeout(() => {
+    document.getElementById('chat-content').style.display = 'flex';
+}, 3000);
+
         
     </script>
     
