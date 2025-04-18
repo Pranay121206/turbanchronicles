@@ -479,8 +479,8 @@
       </footer>
 
     <script>
-        // Mobile Navigation Toggle
-        document.querySelector('.burger').addEventListener('click', function() {
+       // Mobile Navigation Toggle
+       document.querySelector('.burger').addEventListener('click', function() {
             document.querySelector('.nav-links').classList.toggle('active');
         });
 
@@ -492,91 +492,92 @@
             }
         });
 
+        // Chat toggle function
+        function toggleChat() {
+            const chatContent = document.getElementById('chat-content');
+            const icon = document.getElementById('chat-toggle-icon');
+            
+            if (chatContent.style.display === 'flex') {
+                chatContent.style.display = 'none';
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                chatContent.style.display = 'flex';
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                document.getElementById('user-input').focus();
+            }
+        }
 
-        
-function toggleChat() {
-    const chatContent = document.getElementById('chat-content');
-    const icon = document.getElementById('chat-toggle-icon');
-
-    if (chatContent.style.display === 'flex') {
-        chatContent.style.display = 'none';
-        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-    } else {
-        chatContent.style.display = 'flex';
-        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-        document.getElementById('user-input').focus();
-    }
-}
-
-async function sendMessage() {
+        // Enhanced sendMessage function
+        async function sendMessage() {
     const input = document.getElementById('user-input');
     const message = input.value.trim();
     if (!message) return;
 
     const messages = document.getElementById('messages');
-
+    
+    // Add user message
     const userMsg = document.createElement('div');
     userMsg.className = 'user-message';
     userMsg.textContent = `You: ${message}`;
     messages.appendChild(userMsg);
-
+    
+    // Add typing indicator
     const typingIndicator = document.createElement('div');
     typingIndicator.id = 'typing';
     typingIndicator.className = 'bot-message';
     typingIndicator.innerHTML = `Bot is typing <span class="typing-dots"><span></span><span></span><span></span></span>`;
     messages.appendChild(typingIndicator);
-
+    
     input.value = '';
     messages.scrollTop = messages.scrollHeight;
 
     try {
-        const response = await fetch('https://turbanchronicles.vercel.app/index.html', {
+        const response = await fetch('http://localhost:3000/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message })
         });
 
         const data = await response.json();
-
+        
         document.getElementById('typing').remove();
-
+        
         const botMsg = document.createElement('div');
         botMsg.className = 'bot-message';
-
+        
         if (data.status === "error") {
-            botMsg.textContent = `Error: ${data.reply}`;
+            botMsg.textContent = `Bot: ${data.reply}`;
             botMsg.classList.add('error-message');
         } else {
             botMsg.textContent = `Bot: ${data.reply}`;
         }
-
+        
         messages.appendChild(botMsg);
-
+        
     } catch (error) {
         console.error("Chat error:", error);
         document.getElementById('typing').remove();
-
+        
         const errorMsg = document.createElement('div');
         errorMsg.className = 'bot-message error-message';
         errorMsg.textContent = "Sorry, I'm experiencing technical difficulties. Please try again later.";
         messages.appendChild(errorMsg);
     }
-
+    
     messages.scrollTop = messages.scrollHeight;
 }
 
-document.getElementById('user-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
-});
+        // Event Listeners
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
 
-// Auto-open chat after 3 seconds
-setTimeout(() => {
-    document.getElementById('chat-content').style.display = 'flex';
-}, 3000);
-
-        
+        // Auto-open chat after 3 seconds
+        setTimeout(() => {
+            document.getElementById('chat-content').style.display = 'flex';
+        }, 3000);
     </script>
     
 </body>
