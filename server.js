@@ -6,17 +6,21 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const API_KEY = '912g50FS7sx4PhnGAtmXGswHNG70TIsJ'; // Replace this with your actual DeepInfra API key
+// 🔐 DeepInfra API Key (hardcoded — replace with yours)
+const API_KEY = '912g50FS7sx4PhnGAtmXGswHNG70TIsJ';
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname)); // Serve static files like index.html, images
 
+// Serve static files like index.html and images
+app.use(express.static(__dirname));
+
+// Serve index.html at root
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Chat API route
+// 💬 Chat endpoint
 app.post('/chat', async (req, res) => {
     const userMessage = req.body.message?.trim();
 
@@ -30,7 +34,11 @@ app.post('/chat', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: `You are a helpful assistant and expert on turban culture.`
+                    content: `You are a helpful assistant and expert on turban culture. 
+Answer questions clearly and concisely in 1–3 sentences about:
+- Turban history, origins, and religious/cultural significance
+- Styles, tying techniques, and regional variations
+- Materials used and modern trends`
                 },
                 { role: "user", content: userMessage }
             ],
@@ -57,11 +65,12 @@ app.post('/chat', async (req, res) => {
         res.json({ reply: reply.trim(), status: "success" });
 
     } catch (err) {
-        console.error("Error:", err);
-        return res.status(500).json({ reply: "Something went wrong. Try again later." });
+        console.error("❌ Error fetching from DeepInfra:", err);
+        return res.status(500).json({ reply: "Something went wrong. Please try again later." });
     }
 });
 
+// 🚀 Start server
 app.listen(PORT, () => {
-    console.log(`Server running at hhttps://turbanchronicles.onrender.com);
+  console.log(`🚀 Server running at https://turbanchronicles.onrender.com`);
 });
