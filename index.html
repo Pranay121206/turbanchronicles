@@ -479,107 +479,106 @@
       </footer>
 
       <script>
-        // Set your backend URL here
-        const API_BASE_URL = 'https://turbanchronicles.vercel.app/'; // ✅ Change if needed
-    
-        // Toggle mobile nav
-        document.querySelector('.burger').addEventListener('click', function () {
-            document.querySelector('.nav-links').classList.toggle('active');
-        });
-    
-        // Highlight current nav link
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentPage = location.pathname.split('/').pop().split('.')[0];
-            if (currentPage === 'index' || currentPage === '') {
-                document.querySelector('.nav-links a[href="index.html"]').classList.add('current-page');
-            }
-        });
-    
-        // Toggle chat visibility
-        function toggleChat() {
-            const chatContent = document.getElementById('chat-content');
-            const icon = document.getElementById('chat-toggle-icon');
-    
-            if (chatContent.style.display === 'flex') {
-                chatContent.style.display = 'none';
-                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-            } else {
-                chatContent.style.display = 'flex';
-                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-                document.getElementById('user-input').focus();
-            }
-        }
-    
-        // Send message to chatbot
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
-            const message = input.value.trim();
-            if (!message) return;
-    
-            const messages = document.getElementById('messages');
-    
-            // Show user message
-            const userMsg = document.createElement('div');
-            userMsg.className = 'user-message';
-            userMsg.textContent = `You: ${message}`;
-            messages.appendChild(userMsg);
-    
-            // Show typing indicator
-            const typingIndicator = document.createElement('div');
-            typingIndicator.id = 'typing';
-            typingIndicator.className = 'bot-message';
-            typingIndicator.innerHTML = `Bot is typing <span class="typing-dots"><span></span><span></span><span></span></span>`;
-            messages.appendChild(typingIndicator);
-    
-            input.value = '';
-            messages.scrollTop = messages.scrollHeight;
-    
-            try {
-                const response = await fetch(`${API_BASE_URL}/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
-    
-                const data = await response.json();
-    
-                document.getElementById('typing').remove();
-    
-                const botMsg = document.createElement('div');
-                botMsg.className = 'bot-message';
-                botMsg.textContent = `Bot: ${data.reply}`;
-                if (data.status === "error") {
-                    botMsg.classList.add('error-message');
-                }
-    
-                messages.appendChild(botMsg);
-    
-            } catch (error) {
-                console.error("Chat error:", error);
-                document.getElementById('typing').remove();
-    
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'bot-message error-message';
-                errorMsg.textContent = "Sorry, I'm experiencing technical difficulties. Please try again later.";
-                messages.appendChild(errorMsg);
-            }
-    
-            messages.scrollTop = messages.scrollHeight;
-        }
-    
-        // Submit on Enter key
-        document.getElementById('user-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    
-        // Auto-open chat after 3 seconds
-        setTimeout(() => {
-            document.getElementById('chat-content').style.display = 'flex';
-        }, 3000);
-    </script>
-    
+        // Mobile Navigation Toggle
+        document.querySelector('.burger').addEventListener('click', function() {
+             document.querySelector('.nav-links').classList.toggle('active');
+         });
+ 
+         // Highlight current page in navigation
+         document.addEventListener('DOMContentLoaded', function() {
+             const currentPage = location.pathname.split('/').pop().split('.')[0];
+             if (currentPage === 'index' || currentPage === '') {
+                 document.querySelector('.nav-links a[href="index.html"]').classList.add('current-page');
+             }
+         });
+ 
+         // Chat toggle function
+         function toggleChat() {
+             const chatContent = document.getElementById('chat-content');
+             const icon = document.getElementById('chat-toggle-icon');
+             
+             if (chatContent.style.display === 'flex') {
+                 chatContent.style.display = 'none';
+                 icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+             } else {
+                 chatContent.style.display = 'flex';
+                 icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                 document.getElementById('user-input').focus();
+             }
+         }
+ 
+         // Enhanced sendMessage function
+         async function sendMessage() {
+     const input = document.getElementById('user-input');
+     const message = input.value.trim();
+     if (!message) return;
+ 
+     const messages = document.getElementById('messages');
+     
+     // Add user message
+     const userMsg = document.createElement('div');
+     userMsg.className = 'user-message';
+     userMsg.textContent = `Bot has received your message`;
+     messages.appendChild(userMsg);
+     
+     // Add typing indicator
+     const typingIndicator = document.createElement('div');
+     typingIndicator.id = 'typing';
+     typingIndicator.className = 'bot-message';
+     typingIndicator.innerHTML = `Bot is typing <span class="typing-dots"></span><span></span><span></span>`;
+     messages.appendChild(typingIndicator);
+     
+     input.value = '';
+     messages.scrollTop = messages.scrollHeight;
+ 
+     try {
+         const response = await fetch('http://localhost:3000/chat', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ message })
+         });
+ 
+         const data = await response.json();
+         
+         document.getElementById('typing').remove();
+         
+         const botMsg = document.createElement('div');
+         botMsg.className = 'bot-message';
+         
+         if (data.status === "error") {
+             botMsg.textContent = `Bot: ${data.reply}`;
+             botMsg.classList.add('error-message');
+         } else {
+             botMsg.textContent = `Bot: ${data.reply}`;
+         }
+         
+         messages.appendChild(botMsg);
+         
+     } catch (error) {
+         console.error("Chat error:", error);
+         document.getElementById('typing').remove();
+         
+         const errorMsg = document.createElement('div');
+         errorMsg.className = 'bot-message error-message';
+         errorMsg.textContent = "Sorry, I'm experiencing technical difficulties. Please try again later.";
+         messages.appendChild(errorMsg);
+     }
+     
+     messages.scrollTop = messages.scrollHeight;
+ }
+ 
+         // Event Listeners
+         document.getElementById('user-input').addEventListener('keypress', function(e) {
+             if (e.key === 'Enter') {
+                 sendMessage();
+             }
+         });
+ 
+         // Auto-open chat after 3 seconds
+         setTimeout(() => {
+             document.getElementById('chat-content').style.display = 'flex';
+         }, 3000);
+     </script>
     
 </body>
 </html>

@@ -1,16 +1,13 @@
-// index.js
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 const API_KEY = process.env.DEEPINFRA_API_KEY || '912g50FS7sx4PhnGAtmXGswHNG70TIsJ';
 
-app.use(cors({
-  origin: 'https://turbanchronicles.vercel.app' // Allow only your frontend
-}));
+app.use(cors());
 app.use(express.json());
 
 function generateLocalResponse(userInput) {
@@ -19,6 +16,8 @@ function generateLocalResponse(userInput) {
 
 app.post('/chat', async (req, res) => {
     const userMessage = req.body.message?.trim();
+
+    console.log("🟠 Incoming message:", userMessage);
 
     if (!userMessage) {
         return res.status(400).json({ reply: "Please enter a question." });
@@ -51,17 +50,21 @@ Answer questions clearly and concisely in 1–3 sentences about:
             body: JSON.stringify(body)
         });
 
+        console.log("🟡 DeepInfra status:", response.status);
         const raw = await response.text();
+        console.log("📦 Raw DeepInfra response:", raw);
 
         let data;
         try {
             data = JSON.parse(raw);
         } catch (err) {
+            console.error("❌ JSON parse error:", err.message);
             return res.status(500).json({ reply: generateLocalResponse(userMessage) });
         }
 
         const reply = data?.choices?.[0]?.message?.content;
         if (!reply) {
+            console.warn("⚠️ AI response missing 'message.content'. Finish reason:", data?.choices?.[0]?.finish_reason);
             return res.status(200).json({
                 reply: generateLocalResponse(userMessage),
                 status: "no-message"
@@ -71,14 +74,11 @@ Answer questions clearly and concisely in 1–3 sentences about:
         res.json({ reply: reply.trim(), status: "success" });
 
     } catch (err) {
+        console.error("🔥 DeepInfra fetch failed:", err.message);
         return res.status(500).json({ reply: generateLocalResponse(userMessage) });
     }
 });
 
-app.get('/', (req, res) => {
-  res.send('TurbanBot is running!');
-});
-
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+}); 
